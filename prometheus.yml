@@ -1,0 +1,1521 @@
+# my global config
+global:
+  scrape_interval:     30s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 30s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  #query_log_file: /prometheus/query.log
+  scrape_timeout: 20s     # scrape_timeout is set to the global default (10s).
+
+  # Attach these labels to any time series or alerts when communicating with
+  # external systems (federation, remote storage, Alertmanager).
+  # external_labels:
+     # monitor: 'codelab-monitor'
+
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      - 'localhost:9093'
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+   - "kafka_stat_rules_broker.yml"
+   - "kafka_stat_rules.yml"
+#   - "kafka_stat_rules_tapsell.yml"
+#   - "kafka_stat_rules_metrix.yml"
+#   - "kafka_stat_rules_tagrow.yml"
+#   - "kafka_stat_rules_trendix.yml"
+#   - "kafka_stat_rules_digiad.yml"
+#   - "kafka_stat_rules_little_metrix.yml"
+   - "elk_stat_rules.yml"
+   - "es_stat_rules.yml"
+   - "k8s_stat_rules.yml"
+   - "mongo_stat_rules.yml"
+   - "prometheus_stat_rules.yml"
+   - "redis_stat_rules.yml"
+   - "spring_stat_rules_tapsell.yml"
+   - "spring_stat_rules_sms.yml"
+   - "druid_stat_rules_metrix.yml"
+   - "pgsql_stat_rule.yml"
+#   - "vcsa_stat_rules_infra.yml"
+   - "server_stat_rules.yml"
+   - "server_stat_rules_swap.yml" 
+   - "server_stat_rules_disk.yml" 
+   - "server_stat_rules_high_load.yml"
+   - "cassandra_stat_rules.yml"
+
+  # - "second.rules"
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  # - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    # static_configs:
+      # - targets: ['localhost:9090']
+ 
+  - job_name: node_exporter_infra
+    static_configs:
+    - targets: ['172.16.3.1:9100',
+                '172.16.3.1:9001',
+                '172.16.3.1:9002'
+               ]
+      labels:
+         group: 'swarm-manager-final'
+    - targets: ['172.16.10.141:9100']
+      labels:
+         group: 'common-ha'
+    - targets: ['45.94.254.27:9100']
+      labels:
+         group: 'wink'
+    - targets: ['185.236.37.220:9100']
+      labels:
+         group: 'pushe.co'
+    - targets: ['172.16.1.200:9100']
+      labels:
+         group: 'sauron'
+    - targets: ['172.16.99.99:9100']
+      labels:
+         group: 'jenkins-registry-artifactory'
+    - targets: ['45.94.254.14:9100']
+      labels:
+         group: 'jira-pegah'
+    - targets: ['172.16.85.85:9100']
+      labels:
+         group: 'git-pegah'
+    - targets: ['77.238.121.55:9100']
+      labels:
+         group: 'storage-asiatech'
+    - targets: ['172.16.13.253:9100']
+      labels:
+         group: 'nfs-sindad'
+    - targets: ['172.16.17.111:9100']
+      labels:
+         group: 'backtory-storage-sindad'
+    - targets: ['45.94.254.25:9100']
+      labels:
+         group: 'mongo-backtory'
+    - targets: ['185.236.37.204:9100',
+#                '185.236.37.203:9100',
+#                '45.94.254.16:9100',
+                '45.94.254.17:9100']
+      labels:
+         group: 'backtory-cdn'
+    - targets: ['45.94.255.8:9100']
+      labels:
+         group: 'intrusion'
+    - targets: ['172.16.10.200:9100']
+      labels:
+         group: 'admin-linux'
+    - targets: ['172.16.10.143:9100']
+      labels:
+         group: 'ha-graylog'
+    - targets: ['172.16.8.221:9100']
+      labels:
+         group: 'arshia1'
+    - targets: ['172.16.94.45:9100']
+      labels:
+         group: 'vpn'
+#    - targets: ['45.94.255.25:9100']
+#      labels:
+#         group: 'metrix-sentry'
+    - targets: ['185.236.37.200:9100']
+      labels:
+         group: 'cactus'
+    - targets: ['45.94.255.10:9100']
+      labels:
+         group: 'wp-landing'
+    - targets: ['172.16.10.242:9100']
+      labels:
+         group: 'gitlab-runner-n1'
+    - targets: ['162.245.81.148:9100']
+      labels:
+         group: 'sauron-trax'
+    - targets: ['172.16.3.5:9100']
+      labels:
+         group: 'ripe-atlas'
+    - targets: ['172.16.3.6:9100']
+      labels:
+         group: 'vcsa-exporter'
+         cluster: 'infra-cluster'
+
+    - targets: ['185.191.77.170:9100',
+                '185.191.77.174:9100',
+                '185.191.76.90:9100']
+      labels:
+         group: 'avabarid-cdn'
+         cluster: 'infra-cluster'
+  
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+#  - job_name: node_exporter_swarm
+#    static_configs:
+#    - targets: ['swarm-n1:9100']
+#      labels:
+#         cluster: 'swarm-cluster'
+#    relabel_configs:
+#    - source_labels: [__address__]
+#      regex: ([^:]+):\d+
+#      target_label: instance
+
+
+ #  - job_name: node_exporter_jira
+ #   static_configs:
+ #   - targets: ['jira-pegah:9100']
+ #     labels:
+ #        cluster: 'jira-cluster'
+ #   relabel_configs:
+ #   - source_labels: [__address__]
+ #     regex: ([^:]+):\d+
+ #     target_label: instance
+
+
+  - job_name: node_exporter_digiad
+    static_configs:
+    - targets: ['172.16.18.206:9100']
+      labels:
+         group: 'mongo-d1-digiad'
+    - targets: ['172.16.18.201:9100']
+      labels:
+         group: 'mongo-digiad'
+    - targets: ['172.16.18.151:9100',
+                '172.16.18.152:9100',
+                '172.16.18.153:9100']
+      labels:
+         group: 'cassandra-digiad'
+    
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: node_exporter_tagrow
+    static_configs:
+    - targets: ['172.16.9.201:9100']
+      labels:
+         group: 'mongo-tz1-tagrow'
+    - targets: ['172.16.9.51:9100']
+      labels:
+         group: 'elastic-tz1-tagrowlyze'
+    - targets: ['172.16.9.1:9100']
+      labels:
+         group: 'tagrowlyze'
+    - targets: ['172.16.9.241:9100']
+      labels:
+         group: 'ha-t1-tagrowlyze'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: node_exporter_tapsell
+    static_configs:
+    - targets: ['172.16.140.13:9100']
+      labels:
+         group: 'sentry-pegah'
+    - targets: ['172.16.6.151:9100',
+                '172.16.6.152:9100',
+                '172.16.6.153:9100',
+                '172.16.6.154:9100',
+                '172.16.6.155:9100',
+                '172.16.6.156:9100',
+                '172.16.6.157:9100',
+                '172.16.6.158:9100',
+                '172.16.6.159:9100',
+                '172.16.6.160:9100',
+                '172.16.6.161:9100',
+                '172.16.6.162:9100',]
+      labels:
+         group: 'cassandra-brain-tapsell'
+    - targets: ['172.16.6.171:9100',
+                '172.16.6.172:9100',
+                '172.16.6.173:9100',
+                '172.16.6.174:9100',
+                '172.16.6.175:9100',
+                '172.16.6.176:9100',]
+      labels:
+         group: 'cassandra-eventstash-tapsell'
+    - targets: ['172.16.5.151:9100',
+                '172.16.5.152:9100',
+                '172.16.5.153:9100',]
+      labels:
+         group: 'cassandra-searchad'
+    - targets: ['172.16.7.151:9100',
+                '172.16.7.152:9100',]
+#                '172.16.7.153:9100',]
+      labels:
+         group: 'cassandra-appnegar'
+    
+    - targets: ['172.16.11.151:9100',
+                '172.16.11.152:9100',
+                '172.16.11.153:9100',
+                '172.16.11.154:9100',
+                '172.16.11.155:9100',
+                '172.16.11.156:9100']
+      labels:
+         group: 'cassandra-dmp'
+    - targets: ['172.16.10.51:9100',
+                '172.16.10.52:9100',
+                '172.16.10.53:9100',]
+      labels:
+         group: 'elastic-log'
+    - targets: ['172.16.5.51:9100',
+                '172.16.5.52:9100',]
+      labels:
+         group: 'elastic-searchad'
+    - targets: ['172.16.6.51:9100',
+                '172.16.6.52:9100',
+                '172.16.6.53:9100',
+                '172.16.6.61:9100',
+                '172.16.6.62:9100',]
+      labels:
+         group: 'elastic-tapsell'
+    - targets: ['172.16.10.101:9100',
+                '172.16.10.102:9100',
+#                '172.16.10.103:9100',
+                '172.16.10.104:9100',
+                '172.16.10.106:9100',
+                '172.16.10.107:9100',
+                '172.16.10.108:9100',
+                '172.16.10.109:9100',
+                '172.16.10.110:9100',
+                '172.16.10.111:9100',
+                '172.16.10.113:9100',
+                '172.16.10.114:9100',
+                '172.16.10.115:9100',
+                '172.16.10.116:9100',
+                '172.16.10.117:9100',
+                '172.16.10.118:9100',
+                '172.16.10.119:9100',
+                '172.16.10.120:9100',
+                '172.16.10.121:9100',
+                '172.16.10.122:9100',
+                '172.16.10.123:9100',
+                '172.16.10.125:9100',
+                '172.16.10.126:9100',]
+      labels:
+         group: 'kafka-pegah'
+    - targets: ['172.16.5.201:9100',
+                '172.16.5.202:9100',
+                '172.16.5.203:9100']
+      labels:
+         group: 'mongo-searchad'
+    - targets: ['172.16.7.201:9100',
+                '172.16.7.202:9100',
+                '172.16.7.203:9100']
+      labels:
+         group: 'mongo-appnegar'
+    - targets: ['172.16.6.202:9100',
+                '172.16.6.203:9100',
+                '172.16.6.204:9100']
+      labels:
+         group: 'mongo-tapsell'
+    - targets: ['172.16.6.221:9100',
+                '172.16.6.222:9100',
+                '172.16.6.223:9100']
+      labels:
+         group: 'mongo-meta-tapsell'
+    - targets: ['172.16.6.205:9100']
+      labels:
+         group: 'mongo-arb-tapsell'
+    - targets: ['172.16.6.206:9100',
+                '172.16.6.207:9100']
+      labels:
+         group: 'mongo-brain-tapsell'
+    - targets: ['172.16.19.201:9100',
+                '172.16.19.202:9100',
+                '172.16.19.203:9100']
+      labels:
+         group: 'brain-data-set-mongo'
+    - targets: ['172.16.6.211:9100',
+                '172.16.155.223:9100']
+      labels:
+         group: 'mongo-eventstash-tapsell'
+    - targets: ['172.16.6.213:9100']
+      labels:
+         group: 'mongo-eventstash-ar-tapsell'
+    - targets: ['172.16.11.201:9100',
+                '172.16.11.202:9100',
+                '172.16.11.203:9100']
+      labels:
+         group: 'dmp-mongo'
+    - targets: ['172.16.6.233:9100']
+      labels:
+         group: 'postgres-tapsell-master'
+    - targets: ['172.16.6.234:9100']
+      labels:
+         group: 'postgres-tapsell-slave'
+    - targets: ['172.16.16.231:9100']
+      labels:
+         group: 'postgres-tapsell-banker'
+    - targets: ['172.16.6.241:9100']
+      labels:
+         group: 'redis-tapsell-ui'
+    - targets: ['172.16.6.245:9100']
+      labels:
+         group: 'redis-tapsell-keyed'
+    - targets: ['172.16.6.242:9100']
+      labels:
+         group: 'redis-tapsell-cache'
+    - targets: ['172.16.6.246:9100']
+      labels:
+         group: 'redis-tapsell-location'
+    - targets: ['172.16.11.243:9100']
+      labels:
+         group: 'redis-dmp-user-profiler'
+    - targets: ['172.16.11.242:9100']
+      labels:
+         group: 'redis-dmp-user-identifier'
+    - targets: ['172.16.11.241:9100']
+      labels:
+         group: 'redis-dmp-user-matcher'
+    - targets: ['172.16.5.241:9100']
+      labels:
+         group: 'redis-s1-searchad'
+    - targets: ['172.16.6.141:9100',
+                '172.16.6.142:9100',
+                '172.16.6.143:9100']
+      labels:
+         group: 'tapsell-ha'
+    - targets: ['172.16.5.141:9100']
+      labels:
+         group: 'searchad-ha'
+    - targets: ['172.16.6.252:9100',
+                '172.16.6.253:9100']
+      labels:
+         group: 'pegah-ml'
+    
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+      
+
+  - job_name: node_exporter_mediaad
+    static_configs:
+    - targets: ['172.16.1.151:9100',
+                '172.16.1.152:9100',
+                '172.16.1.153:9100',
+                '172.16.1.154:9100',
+                '172.16.1.155:9100',
+                '172.16.1.156:9100',
+                '172.16.1.157:9100',
+                '172.16.1.158:9100',
+                '172.16.1.159:9100',]
+      labels:
+         group: 'cassandra-mediaad'
+    - targets: ['172.16.1.51:9100',
+                '172.16.1.52:9100',
+                '172.16.1.53:9100',]
+      labels:
+         group: 'elastic-mediaad'
+    - targets: ['172.16.1.181:9100',
+                '172.16.1.182:9100',
+                '172.16.1.183:9100',]
+      labels:
+         group: 'mongo-mediaad'
+    - targets: ['172.16.1.220:9100']
+      labels:
+         group: 'mongo-contest-mediaad'
+    - targets: ['172.16.1.173:9100']
+      labels:
+         group: 'mysql-mediaad-master'
+    - targets: ['172.16.1.172:9100']
+      labels:
+         group: 'mysql-mediaad-slave'
+    - targets: ['172.16.1.218:9100']
+      labels:
+         group: 'redis-mediaad-brain'
+    - targets: ['172.16.1.243:9100']
+      labels:
+         group: 'redis-mediaad-user'
+    - targets: ['172.16.1.241:9100',
+                '172.16.1.242:9100',
+                '172.16.1.245:9100',
+                '172.16.1.246:9100']
+      labels:
+         group: 'ha-mediaad'
+    - targets: ['172.16.10.141:9100']
+      labels:
+         group: 'ha-migration'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: node_exporter_metrix
+    static_configs:
+    - targets: ['172.16.17.141:9100']
+      labels:
+         group: 'cdn-ha'
+    - targets: ['172.16.4.141:9100',
+                '172.16.4.142:9100']
+      labels:
+         group: 'metrix-ha'
+    - targets: ['172.16.4.151:9100',
+                '172.16.4.152:9100']
+      labels:
+         group: 'cassandra-metrix'
+    - targets: ['172.16.4.51:9100',
+                '172.16.4.52:9100',
+                '172.16.4.53:9100',
+                '172.16.4.54:9100',
+                '172.16.4.55:9100',
+                '172.16.4.56:9100',
+                '172.16.4.57:9100',
+                '172.16.4.58:9100',
+                '172.16.4.59:9100',]
+      labels:
+         group: 'elastic-metrix'
+    - targets: ['172.16.4.61:9100',
+                '172.16.4.62:9100',]
+      labels:
+         group: 'elastic-c-metrix'
+    - targets: ['172.16.4.101:9100',
+                '172.16.4.102:9100',
+                '172.16.4.103:9100',
+                '172.16.4.104:9100',
+                '172.16.4.105:9100',
+                '172.16.4.106:9100',
+                '172.16.4.107:9100',]
+      labels:
+         group: 'kafka-metrix'
+    - targets: ['172.16.4.201:9100',
+                '172.16.4.202:9100',
+                '172.16.4.203:9100']
+      labels:
+         group: 'mongo-metrix'
+    - targets: ['172.16.4.231:9100',
+                '172.16.4.232:9100',]
+      labels:
+         group: 'postgres-metrix'
+    - targets: ['172.16.4.241:9100']
+      labels:
+         group: 'redis-metrix-ui'
+    - targets: ['172.16.4.246:9100']
+      labels:
+         group: 'redis-metrix'
+    - targets: ['172.16.4.206:9100']
+      labels:
+         group: 'druid-metrix'
+    
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: node_exporter_little_metrix
+    static_configs:
+    - targets: ['172.20.4.101:9100']
+      labels:
+         group: 'kafka-little-metrix'
+    - targets: ['77.238.121.50:9100']
+      labels:
+         group: 'postgres-little-metrix'
+    - targets: ['77.238.121.58:9100']
+      labels:
+         group: 'little-metrix-ha'
+    - targets: ['172.20.1.101:9100']
+      labels:
+         group: 'kube-little-metrix'
+    
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: node_exporter_stg
+    static_configs:
+    - targets: ['172.16.14.151:9100',
+                '172.16.14.152:9100',
+                '172.16.14.153:9100',
+               ]
+      labels:
+         group: 'stg-cassandra'
+    - targets: ['172.16.14.221:9100',
+                '172.16.14.222:9100',
+                '172.16.14.223:9100',
+               ]
+      labels:
+         group: 'stg-mongo'
+    - targets: ['172.16.14.201:9100',
+                '172.16.14.202:9100',
+                '172.16.14.203:9100',
+               ]
+      labels:
+         group: 'stg-kafka'
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+#--------------------------------------------------------------------------
+#--------------------------------------------------------------------------
+  - job_name: vmware_exporter
+    metrics_path: '/metrics'
+    scrape_interval: 120s
+    scrape_timeout: 110s
+    static_configs:
+    - targets: ['172.16.3.6:9272']
+      labels:
+        group: 'vcsa-exporter'
+        instance: '172.16.3.6'
+
+  - job_name: haproxy_exporter
+    metrics_path: '/metrics'
+    static_configs:
+    - targets: ['172.16.3.6:9101']
+      labels:
+        group: 'ha-common'
+        instance: '172.16.10.141:9090'
+    - targets: ['172.16.3.6:9102']
+      labels:
+        group: 'ha-mediaad'
+        instance: '172.16.1.241:9090'
+    - targets: ['172.16.3.6:9103']
+      labels:
+        group: 'ha-mediaad'
+        instance: '172.16.1.242:9090'
+    - targets: ['172.16.3.6:9104']
+      labels:
+        group: 'ha-mediaad'
+        instance: '172.16.1.245:9090'
+    - targets: ['172.16.3.6:9105']
+      labels:
+        group: 'ha-mediaad'
+        instance: '172.16.1.246:9090'
+
+  - job_name: cassandra_exporter_tapsell
+    static_configs:
+    - targets: ['172.16.6.151:8080',
+                '172.16.6.152:8080',
+                '172.16.6.153:8080',
+                '172.16.6.154:8080',
+                '172.16.6.155:8080',
+                '172.16.6.156:8080',
+                '172.16.6.157:8080',
+                '172.16.6.158:8080',
+                '172.16.6.159:8080',
+                '172.16.6.160:8080',
+#                '172.16.6.161:8080',
+#                '172.16.6.162:8080',
+                ]
+      labels:
+         group: 'cassandra-brain-tapsell'
+         cluster: 'tapsell-cluster'
+    - targets: ['172.16.6.171:8080',
+                '172.16.6.172:8080',
+                '172.16.6.173:8080',
+                '172.16.6.174:8080',
+                '172.16.6.175:8080',
+                '172.16.6.176:8080',]
+      labels:
+         group: 'cassandra-eventslash-tapsell'
+         cluster: 'tapsell-cluster'
+    - targets: ['172.16.5.151:8080',
+                '172.16.5.152:8080',
+                '172.16.5.153:8080',]
+      labels:
+         group: 'cassandra-searchad'
+         cluster: 'tapsell-cluster'
+    - targets: ['172.16.7.151:8080',
+                '172.16.7.152:8080',]
+      labels:
+         group: 'cassandra-appnegar'
+         cluster: 'tapsell-cluster'
+    - targets: ['172.16.11.151:8080',]
+      labels:
+         group: 'cassandra-dmp'
+         cluster: 'tapsell-cluster'
+    
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: cassandra_exporter_digiad
+    static_configs:
+    - targets: [
+                '172.16.18.151:8080',
+                '172.16.18.152:8080',
+                '172.16.18.153:8080',
+                ]
+      labels:
+         group: 'cassandra-digiad'
+         cluster: 'digiad-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: cassandra_exporter_mediaad
+    static_configs:
+    - targets: [
+                '172.16.1.151:8080',
+                '172.16.1.152:8080',
+                '172.16.1.153:8080',
+                '172.16.1.154:8080',
+                '172.16.1.155:8080',
+                '172.16.1.156:8080',
+                '172.16.1.157:8080',
+                '172.16.1.158:8080',
+                '172.16.1.159:8080',
+               ]
+      labels:
+         cluster: 'mediaad-cluster'
+         group: 'cassandra-mediaad'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: cassandra_exporter_metrix
+    static_configs:
+    - targets: [
+                '172.16.4.151:8080',
+                '172.16.4.152:8080',
+               ]
+      labels:
+         cluster: 'metrix-cluster'
+         group: 'cassandra-metrix'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: kafka_exporter_metrix
+    static_configs:
+    - targets: ['localhost:9529']
+      labels:
+         cluster: 'metrix-cluster'
+
+  - job_name: kafka_exporter_little_metrix
+    static_configs:
+    - targets: ['localhost:9539']
+      labels:
+         cluster: 'little-metrix-cluster'
+
+
+  - job_name: kafka_exporter_pegah
+    static_configs:
+    - targets: ['localhost:9519']
+      labels:
+         cluster: 'tapsell-cluster'
+
+#  - job_name: kafka_exporter_tagrow
+#    static_configs:
+#    - targets: ['localhost:9539']
+#      labels:
+#         cluster: 'tagrow-cluster'
+
+
+  - job_name: spring_exporter_metrix
+    static_configs:
+    - targets: [
+                'spring-panel-metrix:9090',
+                'spring-collector-metrix:9090',
+                'spring-collectorv2-metrix:9090',
+                'spring-tracker-api-metrix:9090',
+                'spring-eventstash-metrix:9090',
+               ]
+      labels:
+         cluster: 'metrix-cluster'
+
+
+    relabel_configs:
+    - source_labels: [srv]
+      regex: /([A-Z-]+)-.+/
+      target_label: srv
+
+
+  - job_name: spring_exporter_tagrowlyze
+    static_configs:
+    - targets: [
+                'spring-instagram-web-tagrowlyze:9090',
+               ]
+      labels:
+         cluster: 'tagrowlyze-cluster'
+
+    relabel_configs:
+    - source_labels: [srv]
+      regex: /([A-Z-]+)-.+/
+      target_label: srv
+
+
+  - job_name: spring_exporter_tapsell
+    static_configs:
+    - targets: [
+                'spring-brain-tapsell:9090',
+                'spring-brain-jolokia-tapsell:9090',
+                'spring-app-v2-tapsell:9090',
+                'spring-core-tapsell:9090',
+                'spring-dsp-tapsell:9090',
+                #'spring-exchange-tapsell:9090',
+                'spring-ssp-tapsell:9090',
+                'spring-web-tapsell:9090',
+                'spring-user-identifier-tapsell:9090',
+                'spring-prediction-service:9090',
+
+                'spring-brain-api-searchad:9090',
+                'spring-dsp-searchad:9090',
+                'spring-gateway-searchad:9090',
+                'spring-user-identifier-searchad:9090',
+                #'spring-redis-searchad:9090',
+                #'spring-brain-engine-searchad:9090',
+
+                'spring-brain-api-sibche:9090',
+                'spring-dsp-sibche:9090',
+                'spring-gateway-sibche:9090',
+                #'spring-user-identifier-sibche:9090',
+
+                'spring-brain-mediator:9090',
+                'spring-core-mediator:9090',
+                'spring-gateway-mediator:9090',
+
+                'spring-statistica-tapsell:9090',
+
+                'spring-user-identifier-dmp:9090',
+                'spring-user-profiler-dmp:9090',
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+
+    - targets: [
+                '10.103.77.18:9090',
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+         group: 'prediction-api-videobazaar'
+    - targets: [
+                '10.110.23.89:9090',
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+         group: 'dsp-videobazaar'
+    - targets: [
+                '10.98.172.74:9090',
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+         group: 'brain-api-videobazaar'
+    - targets: [
+                '10.103.48.117:9090',
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+         group: 'gateway-videobazaar'
+
+
+    relabel_configs:
+    - source_labels: [srv]
+      regex: /([A-Z-]+)-.+/
+      target_label: srv
+
+
+  - job_name: spring_exporter_mediaad
+    static_configs:
+    - targets: [
+                #'spring-exchange-mediaad:9090',
+                #'spring-serve-mediaad:9090',
+                'spring-gateway-mediaad:9090',
+               ]
+      labels:
+         cluster: 'mediaad-cluster'
+
+    relabel_configs:
+    - source_labels: [srv]
+      regex: /([A-Z-]+)-.+/
+      target_label: srv
+
+
+  - job_name: elk_exporter
+    static_configs:
+    - targets: ['localhost:6969']
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:6969'
+      replacement: 'elk-stats-mediaad'
+      target_label: instance
+
+
+  - job_name: mongo_exporter_mediaad
+    static_configs:
+    - targets: ['localhost:9218',
+                'localhost:9219',
+                'localhost:9217',
+                'localhost:9220',
+               ]
+      labels: 
+         cluster: 'mediaad-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9219'
+      replacement: 'mongo-n3'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9218'
+      replacement: 'mongo-n1'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9217'
+      replacement: 'mongo-n2'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9220'
+      replacement: 'mongo-contest'
+      target_label: instance
+
+
+  - job_name: mongo_exporter_tapsell
+    static_configs:
+    - targets: [
+#                'localhost:9221',
+                'localhost:9222',
+                'localhost:9223',
+                'localhost:9224',
+                'localhost:9225',
+                'localhost:9226',
+                'localhost:9227',
+                'localhost:9228',
+                'localhost:9232',
+                'localhost:9233',
+                'localhost:9234',
+                'localhost:9235',
+                'localhost:9236',
+                'localhost:9237',
+                'localhost:9246',
+                'localhost:9247',
+                'localhost:9248',
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+
+    relabel_configs:
+ #   - source_labels: [__address__]
+ #     regex: '.*:9221'
+ #     replacement: 'tapsell-mongo-n1'
+ #     target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9234'
+      replacement: 'tapsell-mongo-n2'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9222'
+      replacement: 'tapsell-mongo-n3'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9223'
+      replacement: 'tapsell-mongo-n4'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9224'
+      replacement: 'searchad-mongo-s1'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9225'
+      replacement: 'searchad-mongo-s2'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9226'
+      replacement: 'searchad-mongo-s3'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9233'
+      replacement: 'appnegar-mongo-a1'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9227'
+      replacement: 'appnegar-mongo-a2'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9228'
+      replacement: 'appnegar-mongo-arb'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9232'
+      replacement: 'brain-mongo-b1'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9235'
+      replacement: 'brain-mongo-b2'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9236'
+      replacement: 'brain-mongo-arb'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9237'
+      replacement: 'dmp-mongo'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9246'
+      replacement: 'brain-data-set-mongo-19.201'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9247'
+      replacement: 'brain-data-set-mongo-19.202'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9248'
+      replacement: 'brain-data-set-mongo-19.203'
+      target_label: instance
+
+
+  - job_name: mongo_exporter_metrix
+    static_configs:
+    - targets: ['localhost:9229',
+                'localhost:9230',
+                'localhost:9231',
+                'localhost:9243',
+                'localhost:9244',
+                'localhost:9245',
+               ]
+      labels:
+         cluster: 'metrix-cluster'
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9229'
+      replacement: 'mongo-mx1'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9230'
+      replacement: 'mongo-mx2'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9231'
+      replacement: 'mongo-mx3'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9243'
+      replacement: 'metrix-meta-mongo-4.211'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9244'
+      replacement: 'metrix-meta-mongo-4.212'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9245'
+      replacement: 'metrix-meta-mongo-4.213'
+      target_label: instance
+
+  - job_name: mongo_exporter_tagrow
+    static_configs:
+    - targets: ['localhost:9240',
+               ]
+      labels:
+         cluster: 'tagrow-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9240'
+      replacement: 'mongo-tz1'
+      target_label: instance
+
+
+  - job_name: mongo_exporter_digiad
+    static_configs:
+    - targets: ['localhost:9241',
+                'localhost:9242',
+               ]
+      labels:
+         cluster: 'digiad-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9241'
+      replacement: 'mongo-d1-digiad'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9242'
+      replacement: 'mongo-digiad'
+      target_label: instance
+
+  - job_name: druid_exporter_metrix
+    static_configs:
+    - targets: [
+                'druid-n1-metrix:8080',
+               ]
+      labels:
+         cluster: 'metrix-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: ([^:]+):\d+
+      target_label: instance
+
+
+  - job_name: redis_exporter_tapsell
+    static_configs:
+    - targets: ['localhost:9121',
+                'localhost:9122',
+                'localhost:9123',
+                'localhost:9124',
+                'localhost:9194',
+                'localhost:9195',
+                'localhost:9196',
+                'localhost:9198',
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9121'
+      replacement: 'redis-location'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9122'
+      replacement: 'redis-ui'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9123'
+      replacement: 'redis-tapsell-brain-keyed'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9124'
+      replacement: 'redis-tapsell-cache'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9195'
+      replacement: 'redis-dmp-user-matcher'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9194'
+      replacement: 'redis-s1-searchad'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9196'
+      replacement: 'redis-dmp-user-identifier'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9198'
+      replacement: 'redis-dmp-user-profiler'
+      target_label: instance
+
+  - job_name: redis_exporter_metrix
+    scrape_interval: 15s
+    static_configs:
+    - targets: ['localhost:9125',
+                'localhost:9126',
+               ]
+      labels:
+         cluster: 'metrix-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9125'
+      replacement: 'redis-mx-ui'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9126'
+      replacement: 'redis-metrix'
+      target_label: instance
+
+
+  - job_name: redis_exporter_mediaad
+    static_configs:
+    - targets: ['localhost:9127',
+                'localhost:9128',
+               ]
+      labels:
+         cluster: 'mediaad-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9127'
+      replacement: 'redis-mediaad-brain'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9128'
+      replacement: 'redis-mediaad-user'
+      target_label: instance
+
+
+#  - job_name: redis_exporter_digiad
+#    static_configs:
+#    - targets: ['localhost:9198',
+#               ]
+#      labels:
+#         cluster: 'digiad-cluster'
+
+#    relabel_configs:
+#    - source_labels: [__address__]
+#      regex: '.*:9198'
+#      replacement: 'redis-digiad'
+#      target_label: instance
+
+
+#  - job_name: redis_exporter_searchad
+#    static_configs:
+#    - targets: ['localhost:9194',
+#                ]
+#      labels:
+#         cluster: 'searchad-cluster'
+#    relabel_configs:
+#    - source_labels: [__address__]
+#      regex: '.*:9194'
+#      replacement: 'redis-s1-searchad'
+#      target_label: instance
+
+
+  - job_name: postgres_exporter_tapsell
+    static_configs:
+    - targets: ['localhost:9190',
+                'localhost:9191',
+                'localhost:9192',
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9190'
+      replacement: 'postgres-tapsell-master'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9191'
+      replacement: 'postgres-tapsell-slave'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9192'
+      replacement: 'postgres-tapsell-banker'
+      target_label: instance
+
+
+  - job_name: postgres_exporter_metrix
+    scrape_interval: 60s
+    static_configs:
+    - targets: ['localhost:9187',
+                'localhost:9188',
+               ]
+      labels:
+         cluster: 'metrix-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9187'
+      replacement: 'postgres-metrix-master'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9188'
+      replacement: 'postgres-metrix-slave'
+      target_label: instance
+
+  - job_name: postgres_exporter_little_metrix
+    static_configs:
+    - targets: ['localhost:9189',
+               ]
+      labels:
+         cluster: 'little-metrix-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9189'
+      replacement: 'postgres-little-metrix'
+      target_label: instance
+
+
+  - job_name: es_exporter_mediaad
+    static_configs:
+    - targets: ['localhost:9108',
+#                'localhost:9109'
+               ]
+      labels:
+         cluster: 'mediaad-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9108'
+      replacement: 'elastic-n1-mediaad'
+      target_label: instance
+#    - source_labels: [__address__]
+#      regex: '.*:9109'
+#      replacement: 'elastic-n2-mediaad'
+#      target_label: instance
+
+
+  - job_name: es_exporter_tapsell
+    static_configs:
+    - targets: ['localhost:9160',
+                'localhost:9161',
+                'localhost:9162',
+                'localhost:9163',
+                'localhost:9164',
+                'localhost:9165',
+                'localhost:9166'
+               ]
+      labels:
+         cluster: 'tapsell-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9160'
+      replacement: 'elastic-t1-tapsell'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9161'
+      replacement: 'elastic-t2-tapsell'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9162'
+      replacement: 'elastic-t3-tapsell'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9163'
+      replacement: 'elastic-t4-tapsell'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9164'
+      replacement: 'elastic-t5-tapsell'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9165'
+      replacement: 'elastic-n1-searchad'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9166'
+      replacement: 'elastic-n2-searchad'
+      target_label: instance
+
+
+  - job_name: es_exporter_metrix
+    static_configs:
+    - targets: ['localhost:9130',
+                'localhost:9131',
+                'localhost:9132',
+                'localhost:9133',
+                'localhost:9134',
+                'localhost:9135',
+                'localhost:9136',
+                'localhost:9137',
+                'localhost:9138',
+                'localhost:9139',
+                'localhost:9140'
+               ]
+      labels:
+         cluster: 'metrix-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9130'
+      replacement: 'elastic-mx1-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9131'
+      replacement: 'elastic-mx2-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9132'
+      replacement: 'elastic-mx3-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9133'
+      replacement: 'elastic-mx4-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9134'
+      replacement: 'elastic-mx5-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9135'
+      replacement: 'elastic-mx6-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9136'
+      replacement: 'elastic-mx7-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9137'
+      replacement: 'elastic-mx8-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9138'
+      replacement: 'elastic-mx9-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9139'
+      replacement: 'elastic-mx-c1-metrix'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9140'
+      replacement: 'elastic-mx-c2-metrix'
+      target_label: instance
+
+  - job_name: es_exporter_tagrowlyze
+    static_configs:
+    - targets: ['localhost:9170',
+               ]
+      labels:
+         cluster: 'tagrow-cluster'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9170'
+      replacement: 'elastic-tz1-tagrowlyze'
+      target_label: instance
+
+
+  - job_name: es_exporter_logging
+    static_configs:
+    - targets: ['localhost:9150',
+                'localhost:9151',
+                'localhost:9152'
+               ]
+      labels:
+         cluster: 'logging-elastic'
+
+    relabel_configs:
+    - source_labels: [__address__]
+      regex: '.*:9150'
+      replacement: 'elastic-log1'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9151'
+      replacement: 'elastic-log2'
+      target_label: instance
+    - source_labels: [__address__]
+      regex: '.*:9152'
+      replacement: 'elastic-log3'
+      target_label: instance
+
+
+  - job_name: 'kubernetes-kubelet'
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      insecure_skip_verify: true
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    kubernetes_sd_configs:
+    -  role: node
+    relabel_configs:
+    - action: labelmap
+      regex: __meta_kubernetes_node_label_(.+)
+    - target_label: __address__
+      replacement: kubernetes.default.svc:443
+    - source_labels: [__meta_kubernetes_node_name]
+      regex: (.+)
+      target_label: __metrics_path__
+      replacement: /api/v1/nodes/${1}/proxy/metrics
+
+
+  - job_name: 'kubernetes-cadvisor'
+    scheme: https
+    tls_config:
+      ca_file: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+      insecure_skip_verify: true
+    bearer_token_file: /var/run/secrets/kubernetes.io/serviceaccount/token
+    kubernetes_sd_configs:
+    - role: node
+    relabel_configs:
+    - action: labelmap
+      regex: __meta_kubernetes_node_label_(.+)
+    - target_label: __address__
+      replacement: kubernetes.default.svc:443
+    - source_labels: [__meta_kubernetes_node_name]
+      regex: (.+)
+      target_label: __metrics_path__
+      replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
+
+
+  - job_name: 'kubernetes-kube-state'
+    kubernetes_sd_configs:
+    - role: pod
+    relabel_configs:
+    - action: labelmap
+      regex: __meta_kubernetes_pod_label_(.+)
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: kubernetes_namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: replace
+      target_label: kubernetes_pod_name
+    - source_labels: [__meta_kubernetes_pod_label_grafanak8sapp]
+      regex: .*true.*
+      action: keep
+    - source_labels: ['__meta_kubernetes_pod_label_daemon', '__meta_kubernetes_pod_node_name']
+      regex: 'node-exporter;(.*)'
+      action: replace
+      target_label: nodename
+
+
+  - job_name: 'spring'
+    kubernetes_sd_configs:
+    - role: pod
+    relabel_configs:
+    - action: labelmap
+      regex: __meta_kubernetes_pod_label_(.+)
+    - source_labels: [__meta_kubernetes_namespace]
+      action: replace
+      target_label: kubernetes_namespace
+    - source_labels: [__meta_kubernetes_pod_name]
+      action: replace
+      target_label: kubernetes_pod_name
+    - source_labels: [__meta_kubernetes_pod_label_grafanak8sapp]
+      regex: .*exporter.*
+      action: keep
+
+
+#  - job_name: kafka_exporter_stg
+#    static_configs:
+#    - targets: ['172.16.20.1:9308']
+#      labels:
+#         cluster: 'stg-cluster'
+#         group: 'kafka-exporter-stg'
+#         instance: '172.16.20.1'
+
+
+  - job_name: 'prometheus'
+    static_configs:
+    - targets: ['localhost:9090']
+
+  - job_name: consul
+    consul_sd_configs:
+      - server: '172.16.14.250:8500'
+##        services: [node_exporter,
+##                   cassandra_exporter
+##                ]
+    relabel_configs:
+#      - source_labels: [__meta_consul_tags]
+#        regex: .*,prometheus,.*
+#        action: keep
+      - source_labels: [__meta_consul_service] #[__meta_consul_service_metadata_external_k8s_ns]
+        regex: .*exporter.*
+        action: keep
+      - source_labels: [__meta_consul_service]
+        target_label: service
+##        target_label: job
+      - source_labels: [__meta_consul_node]
+        target_label: target_name
+
+#  - job_name: dockerswarm
+#    dockerswarm_sd_configs:
+#      - host: http://172.16.3.1:2377
+#        role: nodes
+
+#    relabel_configs:
+#      - source_labels: [__meta_dockerswarm_node_address]
+#        target_label: __address__
+#        replacement: $1:9002

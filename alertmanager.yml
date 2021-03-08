@@ -1,0 +1,1241 @@
+global:
+
+route:
+  receiver: 'default' 
+  group_by: ['alertname','cluster','instance']
+  group_wait: 30s
+  group_interval: 1m
+  repeat_interval: 120h
+
+  routes:
+  - receiver: 'web_hook_loger'
+    continue: true
+
+  - receiver: 'telegram_beta'
+    group_by: ['...']
+    match_re:
+      severity: high   #"k8s.*"
+    continue: true
+
+  - receiver: 'telegram_critical'
+    group_by: ['...']
+    match:
+      severity: critical
+    continue: true
+
+  - receiver: 'telegram_warning'
+    group_by: ['...']
+    match:
+      severity: warning
+    continue: true
+
+  - receiver: 'mm_server_stats_infra_sms'
+    continue: true
+
+  - receiver: 'mm_server_stats_infrastructure'
+    match:
+      job : node_exporter_infra
+    continue: true
+
+  - receiver: 'mm_server_stats_infrastructure'
+    match:
+      product: infra
+    continue: true
+
+  - receiver: 'mm_server_stat_rules_sms'
+    match:
+      product: sms
+
+  - receiver: 'mm_spring_stats_sms'
+    match:
+      product: sms_spring
+
+  - receiver: 'mm_server_stats_little_metrix'
+    match:
+      job : node_exporter_little_metrix
+
+  - receiver: 'mm_server_stats_digiad'
+    match:
+      job : node_exporter_digiad
+
+  - receiver: 'mm_server_stats_mediaad'
+    match:
+      job : node_exporter_mediaad
+
+  - receiver: 'mm_server_stats_tapsell'
+    match:
+      job : node_exporter_tapsell
+
+  - receiver: 'mm_server_stats_metrix'
+    match:
+      job : node_exporter_metrix
+
+  - receiver: 'mm_server_stats_tagrow'
+    match:
+      job : node_exporter_tagrow
+
+#  - receiver: 'mm_kafka_stats_mediaad'
+#    match:
+#      job : kafka_exporter_mediaad
+#  - receiver: 'mm_kafka_stats_pegah'
+#    match:
+#      job : kafka_exporter_pegah
+
+  - receiver: 'mm_kafka_stats_mediaad'
+    match:
+      product: mediaad
+#      severity : critical
+  - receiver: 'mm_kafka_stats_digiad'
+    match:
+      product: digiad
+
+  - receiver: 'mm_kafka_stats_little_metrix'
+    match:
+      product: little_metrix
+
+
+  - receiver: 'mm_kafka_stats_pegah'
+    match:
+      product: tapsell
+#      severity : info
+
+  - receiver: 'mm_kafka_stats_cafead'
+    match:
+      product: cafead
+
+  - receiver: 'mm_kafka_stats_trendix'
+    match:
+      product: trendix
+#      severity : normal
+
+  - receiver: 'mm_kafka_stats_metrix'
+    match:
+      job : kafka_exporter_metrix
+
+  - receiver: 'mm_kafka_stats_tagrow'
+    match:
+      product: tagrowlyze
+#      job : kafka_exporter_tagrow
+
+  - receiver: 'mm_elk_stats'
+    match:
+      job : elk_exporter
+
+  - receiver: 'mm_es_stats_mediaad'
+    match:
+      job : es_exporter_mediaad
+
+  - receiver: 'mm_es_stats_tapsell'
+    match_re:
+      job : es_exporter_tapsell
+
+  - receiver: 'mm_es_stats_metrix'
+    match:
+      job : es_exporter_metrix
+
+  - receiver: 'mm_es_stats_tagrowlyze'
+    match:
+      job : es_exporter_tagrowlyze
+
+  - receiver: 'mm_cassandra_stats_mediaad'
+    match:
+      job : cassandra_exporter_mediaad
+
+  - receiver: 'mm_cassandra_stats_tapsell'
+    match_re:
+      job : cassandra_exporter_tapsell
+    continue: true
+
+  - receiver: 'mm_cassandra_stats_metrix'
+    match:
+      job : cassandra_exporter_metrix
+
+#  - receiver: 'mm_k8s_stats'
+#    match:
+#      job: kubernetes-kube-state
+
+  - receiver: 'mm_k8s_stats_mediaad'
+    match:
+      namespace: mediaad
+
+  - receiver: 'mm_k8s_stats_metrix'
+    match:
+      namespace: metrix
+
+  - receiver: 'mm_k8s_stats_tagrow'
+    match:
+      namespace: tagrow
+
+  - receiver: 'mm_k8s_stats_tapsell'
+    match_re:
+      alertname: "k8s.*"
+    
+
+  - receiver: 'mm_mongo_stats_mediaad'
+    match:
+      job: mongo_exporter_mediaad
+
+  - receiver: 'mm_mongo_stats_digiad'
+    match:
+      job: mongo_exporter_digiad
+
+  - receiver: 'mm_mongo_stats_tapsell'
+    match:
+      job: mongo_exporter_tapsell
+
+  - receiver: 'mm_mongo_stats_metrix'
+    match:
+      job: mongo_exporter_metrix
+
+  - receiver: 'mm_mongo_stats_tagrow'
+    match:
+      job: mongo_exporter_tagrow
+
+  - receiver: 'mm_spring_stats_tapsell'
+    match:
+      job: spring_exporter_tapsell
+
+  - receiver: 'mm_spring_stats_mediaad'
+    match:
+      job: spring_exporter_mediaad
+
+  - receiver: 'mm_spring_stats_metrix'
+    match:
+      job: spring_exporter_metrix
+ 
+  - receiver: 'mm_redis_stats_mediaad'
+    match:
+      job: redis_exporter_mediaad
+ 
+  - receiver: 'mm_redis_stats_tapsell'
+    match:
+      job: redis_exporter_tapsell
+ 
+  - receiver: 'mm_redis_stats_metrix'
+    match:
+      job: redis_exporter_metrix
+
+  - receiver: 'mm_redis_stats_digiad'
+    match:
+      job: redis_exporter_digiad
+
+  - receiver: 'mm_druid_stats_metrix'
+    match:
+      job: druid_exporter_metrix
+
+  - receiver: 'mm_postgres_stats_tapsell'
+    match:
+      job : postgres_exporter_tapsell
+
+  - receiver: 'mm_postgres_stats_metrix'
+    match:
+      job : postgres_exporter_metrix
+
+
+  - receiver: 'mm_postgres_stats_little_metrix'
+    match:
+      job : postgres_exporter_little_metrix
+
+
+#  - receiver: 'telegram'
+#    match:
+#      job : vmware_exporter
+
+#----------------------------------------------------------------------------------------------------
+#----------------------------------------------------------------------------------------------------
+receivers:
+  - name: default
+
+
+  - name: mm_server_stats_infrastructure
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/nhm5yc171fdqpfgkwk979por9r
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+#  - name: mm_server_stats_infra
+#    slack_configs:
+#    - api_url: http://116.203.146.167:8065/hooks/nhm5yc171fdqpfgkwk979por9r
+#      send_resolved: true
+#      http_config: {}
+#      username: 'Alert Manager'
+#      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+#      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+#      title_link: ''
+#      pretext: ''
+#      text: |-
+#        *Alert:* {{ .CommonAnnotations.summary }}
+#        *Details:*
+#        {{ range .Alerts -}}
+#        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+#      fallback: ''
+#      icon_emoji: ''
+#      icon_url: ''
+
+
+  - name: mm_server_stat_rules_sms
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/nhm5yc171fdqpfgkwk979por9r
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_server_stats_digiad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/cc9w7kdmai8itbzppirrgmk8kh
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_server_stats_tagrow
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/zupf8f4hajrbukeye6epmipwza
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_server_stats_mediaad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/buffg6ra3iggujyodkzxky3nhe
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_server_stats_little_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/eg75mq68fpfs5mj671ehjo8udh
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+
+
+  - name: mm_server_stats_tapsell
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/pe1ttsagrbg53e94qwphbjos7h
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_server_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/t4cgxgrgkigy7e3brnza6qq9ia
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_kafka_stats_mediaad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/gusid6xu1f8rtpcy45ywib88rc
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "consumergroup") (eq .Name "topic") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_kafka_stats_little_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/9nznwjb7kfy73jmdwpod315iky
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "consumergroup") (eq .Name "topic") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_kafka_stats_digiad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/a8m1tfs8ztb5br5gwhaq7um4qr
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "consumergroup") (eq .Name "topic") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_kafka_stats_pegah
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/tk87g6yozjrzidnxcc6qkxcqty
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "consumergroup") (eq .Name "topic") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+  - name: mm_kafka_stats_cafead
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/yh9h1hafjfdipgos17t51uy46w
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "consumergroup") (eq .Name "topic") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_kafka_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/se6yrf43ibbcdpaphrkbeqkd8a
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "consumergroup") (eq .Name "topic") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_kafka_stats_trendix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/cs7nrpdrptng8nuzyzo5gi7gsc
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "consumergroup") (eq .Name "topic") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_kafka_stats_tagrow
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/bsuispdpm3nybfsdeiggkdonxy
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "consumergroup") (eq .Name "topic") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_elk_stats
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/buffg6ra3iggujyodkzxky3nhe
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_es_stats_mediaad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/tcohwjdr5b8xfqon554nphqwja
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "host") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_es_stats_tapsell
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/c5hmzq44qtdxfr4drxye8rc96c
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_es_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/qe4m5tqj8pfrmdr5me35k6or8w
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+#        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "instance") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_es_stats_tagrowlyze
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/a1dbkwowi388ukyx36xzf5ar1c
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "host") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_cassandra_stats_digiad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/6wx7puxdjibi98qjsm9a78phay
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cassandra_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_cassandra_stats_mediaad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/qyuhzk5jxtf7jgpjg1cy95pnce
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cassandra_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_cassandra_stats_tapsell
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/f9mzynk7qtr6mj4bnwz7oac4ue
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cassandra_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+#  - name: mm_server_stats_infra_sms
+#    webhook_configs:
+#      - url: http://162.245.81.148:31010/telegram/bot567886937:AAER13EmjCu4K20O_IG5FrdtjEzAnxUpMQ0/sendMessage?chat_id=33159150&text=testalertsmsi
+#      - url: https://api.kavenegar.com/v1/54497A382F54666175493133473759556856654A65723872346364356E326B484E35774F4C75376B7067343D/verify/lookup.json?template=disaster&token=service&token2=prod&receptor=989122267944
+#        send_resolved: true
+  - name: mm_server_stats_infra_sms
+    webhook_configs:
+    - url: https://api.pegah.tech/prometheus/sms?token=GOTOTHEMOONANDBACK1234
+      send_resolved: true
+
+  - name: mm_cassandra_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/yokq55so1ig9xdq1uoztcub9mc
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cassandra_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_k8s_stats_tapsell
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/3uy831q4epgc8exez7s8e7co1c
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "namespace") (eq .Name "pod") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_k8s_stats_mediaad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/tucub5hg7tgqbewzcc4opk8i3o
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "namespace") (eq .Name "pod") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_k8s_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/k6hiwhbo3pfrdpwm78tftx487w
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "namespace") (eq .Name "pod") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_k8s_stats_tagrow
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/srxzw5kdh3ymt88ce11s44wz6o
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "namespace") (eq .Name "pod") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_mongo_stats_mediaad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/38wog6keybdqi8monbqujojscr
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "mongo_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_mongo_stats_digiad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/krd6h74ah7r7brgw1uobz5ba3w
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "mongo_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_mongo_stats_tapsell
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/b5engguyz7fyt8fyqn8xgews3w
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "mongo_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_mongo_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/tp5c9cfjrfghjn5m3g93b5pb6a
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "mongo_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_mongo_stats_tagrow
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/dy6mthyisfnpjri7xqqsaoqzhr
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "mongo_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_spring_stats_tapsell
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/57dtq1mbqpgjpq9smjfyb3g84o
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+
+  - name: mm_spring_stats_sms
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/57dtq1mbqpgjpq9smjfyb3g84o
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+
+  - name: mm_spring_stats_mediaad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/5n8swfmfdtrpueokmw31j9gfpa
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_spring_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/bsr8x8xefiyrzqyn43sxrai59w
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_redis_stats_digiad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/gh1u4e8a8fyctemqz8gtsxagua
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_redis_stats_mediaad
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/1c6g9b6ybbb1jcpcrweze1wajw
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_redis_stats_tapsell
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/i4eca1wei7dz5mw1zdo9y5xydr
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+
+  - name: mm_redis_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/4secznraapyppkmp186i59asfw
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_druid_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/gm1sxcafutrbbx1sbsmxu5zf4c
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "host") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_postgres_stats_tapsell
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/jfs5ezr3sbrpmjy8354yft6sre
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "cluster") (eq .Name "instance") (eq .Name "group") ) -}} [*{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+
+  - name: mm_postgres_stats_little_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/wgpoqqx7kj8atc6j93ext1sc4w
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "postgres_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+
+  - name: mm_postgres_stats_metrix
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/rorhzpmbffgu8ctaetg18wgj1h
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "postgres_cluster_name") (eq .Name "instance") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+
+  - name: telegram_critical
+    webhook_configs:
+    - send_resolved: true
+      url: http://172.16.10.100:9087/alert/-1001306338142
+
+  - name: telegram_warning
+    webhook_configs:
+    - send_resolved: true
+      url: http://172.16.10.100:9087/alert/-1001338130098
+
+  - name: telegram_beta
+    webhook_configs:
+    - send_resolved: true
+      url: http://172.16.10.100:9087/alert/-1001346283904
+
+  - name: 'web_hook_loger'
+    webhook_configs:
+    - send_resolved: True
+      url: http://172.16.0.10:6725/alert
+
+  - name: seyed
+    slack_configs:
+    - api_url: http://116.203.146.167:8065/hooks/sku1sz7wkpruietmjyac3hizfw
+      send_resolved: true
+      http_config: {}
+      username: 'Alert Manager'
+      color: '{{ if eq .Status "firing" }}danger{{ else }}good{{ end }}'
+      title: '[{{ .Status | toUpper }}{{ if eq .Status "firing" }}:{{ .Alerts.Firing | len }}{{ end }}]'
+      title_link: ''
+      pretext: ''
+      text: |-
+        *Alert:* {{ .CommonAnnotations.summary }}
+        *Details:*
+        {{ range .Alerts -}}
+        {{ range .Labels.SortedPairs -}} {{- if (or (eq .Name "instance") (eq .Name "mountpoint") (eq .Name "group") ) -}} • *{{ .Name }}:*  ```{{ .Value }}``` {{ printf "\n" -}} {{- end -}} {{- end -}} {{- printf "\n" -}} {{- end -}}
+      fallback: ''
+      icon_emoji: ''
+      icon_url: ''
+

@@ -1,0 +1,21 @@
+groups:
+- name: 99th_percentile_getAdsBids_sms
+  rules:
+  - alert: High99thPercentileTime_tapsell_sms
+    expr: getAdsBids_seconds{deploy="brain-api", quantile="0.99", status="200", ns="tapsell",job="spring_exporter_tapsell"} > 5
+    for: 15m
+    labels:
+      product: sms_spring
+      severity: critical
+    annotations:
+      summary: "The Brain Pod 99th Percentile time is more than 5 sec."
+
+  - alert: High99thPercentileTime_searchads_sms
+    expr: getAdsBids_seconds{deploy="brain-api", quantile="0.99", status="200", ns="searchad",job="spring_exporter_tapsell"} > 3
+    for: 15m
+    labels:
+      product: sms_spring
+      severity: critical
+    annotations:
+      summary: "The Brain Pod 99th Percentile time is more than 3 sec."
+

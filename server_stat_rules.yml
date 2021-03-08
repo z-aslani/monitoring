@@ -1,0 +1,101 @@
+groups:
+- name: base
+  rules:
+
+  - alert: NodeRestart
+    expr: node_time_seconds - node_boot_time_seconds < 120
+    for: 1m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Node Has Just Been Restarted!"
+
+  - alert: TargetMissing
+    expr: up {group!="vcsa-exporter", job!="consul|spring"} == 0
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Target Exporter is Unreachable!"
+
+  - alert: NodeUnreachable-vcsa-exporter
+    expr: up {group="vcsa-exporter"} == 0
+    for: 10m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Node is Unreachable!"
+
+  - alert: HighSwap
+    expr: (
+          ((node_memory_SwapTotal_bytes{group!="pegah-ml"} - node_memory_SwapFree_bytes{group!="pegah-ml"}) / (node_memory_SwapTotal_bytes{group!="pegah-ml"} )) > 0.25
+          or
+          ((node_memory_SwapTotal - node_memory_SwapFree) / (node_memory_SwapTotal)) > 0.25
+          )
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Node Has High Swap Usage!"
+
+  - alert: NodeOutOfMemory
+    expr: (
+          ((node_memory_MemAvailable_bytes) / (node_memory_MemTotal_bytes)) * 100 < 10
+          or
+          ((node_memory_MemAvailable) / (node_memory_MemTotal)) * 100 < 10
+          )
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Node out of memory!"
+
+  - alert: HighDisk
+    expr: (
+                (1- ((node_filesystem_avail_bytes{fstype=~".*ext.*|.*xfs.*"}) / node_filesystem_size_bytes{fstype=~".*ext.*|.*xfs.*"}))  > 0.85
+                or
+                1- ((node_filesystem_avail{fstype=~".*ext.*|.*xfs.*"}) / node_filesystem_size{fstype=~".*ext.*|.*xfs.*"})  > 0.85
+          )       
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Node Has High Disk Usage! VALUE = {{ $value }}"
+      
+  - alert: HighDisk_sms
+    expr:  1- ((node_filesystem_avail_bytes{fstype=~".*ext.*|.*xfs.*"}) / node_filesystem_size_bytes{fstype=~".*ext.*|.*xfs.*"})  > 0.95
+    for: 5m
+    labels:
+      product: sms
+      severity: critical
+    annotations:
+      summary: "Node Has High Disk Usage!  VALUE = {{ $value }}"
+
+  - alert: HighLoad
+    expr: (
+                (avg by(instance, job,group) (node_load5) / count by(instance, job,group) (count by(cpu, instance, job,group) (node_cpu_seconds_total{group!~"mongo.*.appnegar",group!="cassandra-appnegar"})) > 8)
+                or
+                (avg by(instance, job,group) (node_load5{job=~"node_exporter_tapsell"}) / count by(instance, job,group) (count by(cpu, instance, job,group) (node_cpu_seconds_total{job="node_exporter_tapsell",group=~"cassandra.*appnegar"})) > 7)
+                or
+                (avg by(instance, job,group) (node_load5{job=~"node_exporter_tapsell",group=~"mongo.*.appnegar"}) / count by(instance, job,group) (count by(cpu, instance, job,group) (node_cpu_seconds_total{job="node_exporter_tapsell",group=~"mongo.*.appnegar"})) > 10)
+                or
+                (avg by(instance, job, nodename) (node_load5) / count by(instance, job, nodename) (count by(cpu, instance, job, nodename) (node_cpu{job="kubernetes-kube-state"})) > 8)
+          )
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Node Has High Load Average! VALUE = {{ $value }}"
+
+  - alert: HighLoad
+    expr: (avg by(instance, job,group) (node_load5) / count by(instance, job,group) (count by(cpu, instance, job,group) (node_cpu_seconds_total{group!~"mongo.*.appnegar",group!="cassandra-appnegar"})) > 2)
+          or
+          (avg by(instance, job, nodename) (node_load5) / count by(instance, job, nodename) (count by(cpu, instance, job, nodename) (node_cpu{job="kubernetes-kube-state"})) > 2)
+    for: 30m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Node Has High Load Average! for 30 min VALUE = {{ $value }}"
+
+
+

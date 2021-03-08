@@ -1,0 +1,11 @@
+groups:
+- name: esx
+  rules:
+
+  - alert: Host_CPU_High
+    expr: vmware_host_cpu_usagemhz_average{job="vmware_exporter"} * 100 / vmware_host_cpu_max{job="vmware_exporter"} > 97
+    for: 10m
+    labels:
+      severity: warning
+    annotations:
+      summary: "High CPU Usage"

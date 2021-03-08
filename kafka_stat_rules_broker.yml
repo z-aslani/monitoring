@@ -1,0 +1,38 @@
+groups:
+- name: brokers
+  rules:
+  - alert: BrokerNumLittleMetrix
+    expr:       kafka_brokers{job="kafka_exporter_little_metrix"} != 1
+    for: 30s
+    labels:
+      product: infra
+      severity: critical
+    annotations:
+      summary: "Broker is Down!"
+
+  - alert: BrokerNumMetrix
+    expr:       kafka_brokers{job="kafka_exporter_metrix"} != 7
+    for: 30s
+    labels:
+      product: infra
+      severity: critical
+    annotations:
+      summary: "Broker is Down!"
+
+  - alert: BrokerNumStaging
+    expr:       kafka_brokers{job="kafka_exporter_stg"} != 3
+    for: 30s
+    labels:
+      product: infra
+      severity: critical
+    annotations:
+      summary: "Broker is Down!"
+
+  - alert: BrokerNumPegah
+    expr:       kafka_brokers{job="kafka_exporter_pegah"} != 22
+    for: 30s
+    labels:
+      product: infra
+      severity: critical
+    annotations:
+      summary: "Broker is Down!"

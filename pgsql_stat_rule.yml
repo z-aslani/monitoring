@@ -1,0 +1,55 @@
+groups:
+- name: common_rules
+  rules:
+  - alert: PostgresqlDown
+    expr: pg_up == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Postgresql down (instance {{ $labels.instance }})"
+      description: "Postgresql instance is down\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: PostgresqlExporterError
+    expr: pg_exporter_last_scrape_error > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Postgresql exporter error (instance {{ $labels.instance }})"
+      description: "Postgresql exporter is showing errors. A query may be buggy in query.yaml\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: PostgresqlReplicationLag
+    expr: pg_stat_replication_pg_wal_lsn_diff > 10
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Postgresql replication lag (instance {{ $labels.instance }})"
+      description: "PostgreSQL replication lag is going up (> 10s)\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: PostgresqlReplicationNotSynced
+    expr: pg_settings_max_sync_workers_per_subscription != 2
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Postgresql replication not sync with master (instance {{ $labels.instance }})"
+
+  - alert: PostgresqlTooManyConnections
+    expr: sum (pg_stat_activity_count) > 921 # pg_settings_max_connections * 0.9
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Postgresql too many connections (instance {{ $labels.instance }})"
+      description: "PostgreSQL instance has too many connections\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: PostgresqlWaleReplicationStopped
+    expr: rate(pg_stat_replication_pg_current_wal_lsn_bytes[20m]) == 0
+    for: 20m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Postgresql WALE replication stopped (instance {{ $labels.instance }})"
+      description: "WAL-E replication seems to be stopped\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"

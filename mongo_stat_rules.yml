@@ -1,0 +1,114 @@
+groups:
+- name: mongodown
+  rules:
+  - alert: MongoRecovering
+    expr:    topk(1, mongodb_mongod_replset_member_health{state="RECOVERING"}) == 1 
+    for: 15s
+    labels:
+      severity: warning
+    annotations:
+      summary: "(instance {{ $labels.name }})is Under Recovery!"
+
+  - alert: MongoInstanceisDown
+    expr:       mongodb_up != 1
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo Instance is Down!"
+
+  - alert: MongoConnectionZero
+    expr:       mongodb_connections == 0
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo Connection is Zero!"
+
+  - alert: MongoqueryExecutorTotalZero
+    expr:      count by(metrics,job,instance,cluster) (mongodb_mongod_metrics_query_executor_total == 0)
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo query executor total is Zero!"
+
+
+  - alert: MongodbReplicationLag
+    expr: avg(mongodb_mongod_replset_member_optime_date{state="PRIMARY"}) - avg(mongodb_mongod_replset_member_optime_date{state="SECONDARY"}) > 10
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "MongoDB replication lag (instance {{ $labels.instance }})"
+#       description: "Mongodb replication lag is more than 10s\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: MongodbTooManyConnections
+    expr: mongodb_connections{state="current"} > 1000
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "MongoDB too many connections (instance {{ $labels.instance }})"
+#      description: "Too many connections\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+
+  - alert: MongoServiceDown
+    expr: mongodb_mongod_replset_member_health != 1
+    for: 1s
+    labels:
+      severity: warning
+    annotations:
+      summary: "MongoDB Service is down on a node! (Dropped Service on Node: {{ $labels.name }})"
+      description: "MongoDB Service is down on a node\n  VALUE = {{ $value }}\n  LABELS= {{ $labels }}"
+
+#------------------specific---rules---per---product--------------------
+
+  - alert: MongoisDown_digiad
+    expr: topk(1,mongodb_mongod_replset_number_of_members{job="mongo_exporter_digiad"}) != 1
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo is Down!"
+
+  - alert: MongoisDown_mediaad
+    expr: topk(1,mongodb_mongod_replset_number_of_members{job="mongo_exporter_mediaad"}) != 3
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo Instance is Down!"
+
+  - alert: MongoisDown_metrix
+    expr: topk(1,mongodb_mongod_replset_number_of_members{job="mongo_exporter_metrix"}) != 3
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo Instance is Down!"
+
+  - alert: MongoisDown_tagrow
+    expr: topk(1,mongodb_mongod_replset_number_of_members{job="mongo_exporter_tagrow"}) != 1
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo Instance is Down!"
+
+  - alert: MongoisDown_tapsell
+    expr: topk(1,mongodb_mongod_replset_number_of_members{job="mongo_exporter_tapsell"}) != 3
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo is Down!"
+
+  - alert: MongoisDown_metrix_meta
+    expr: topk(1,mongodb_mongod_replset_number_of_members{job="mongo_exporter_metrix"}) != 3
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Mongo is Down!"
+

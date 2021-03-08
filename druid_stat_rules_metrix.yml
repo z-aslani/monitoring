@@ -1,0 +1,25 @@
+groups:
+- name: updown_metrix
+  rules:
+#  - alert: DruidIsDown
+#    expr: scrape_samples_scraped{cluster="metrix-cluster",instance="druid-n1-metrix",job="druid_exporter_metrix"} == 0
+#    for: 30s
+#    labels:
+#      severity: critical
+#    annotations:
+#      summary: "Druid instance is Down!"
+  - alert: DruidIsUnhealthy
+    expr: druid_health_status{cluster="metrix-cluster", instance="druid-n1-metrix", job="druid_exporter_metrix"} == 0
+    for: 60s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Druid status is Unhealthy!"
+  - alert: DruidHasNoRunningTasks
+    expr: count(druid_tasks_duration{task_status="RUNNING"}) != count(druid_supervisors)
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Druid has no Running tasks!"
+

@@ -1,0 +1,51 @@
+groups:
+- name: spring_tapsell
+  rules:
+#  - alert: HighYoungGCDuration
+#    expr: sum(delta(jvm_gc_pause_seconds_sum{action="end of minor GC"} [2m])) by (pod,job,srv) > 10
+#    for: 0s
+#    labels:
+#      severity: critical
+#    annotations:
+#      summary: "High Young GC Duration on Service."
+
+#  - alert: High99thPercentileTime
+#    expr: actions_relatedActionType_seconds{quantile="0.99", status="200",job="spring_exporter_tapsell"} > 0.5
+#    for: 10s
+#    labels:
+#      severity: critical
+#    annotations:
+#      summary: "The Pod 99th Percentile time is more than 3 sec."
+
+  - alert: High99thPercentileTime_tapsell
+    expr: getAdsBids_seconds{deploy="brain-api", quantile="0.99", status="200", ns="tapsell",job="spring_exporter_tapsell"} > 2
+    for: 15m
+    labels:
+      severity: critical
+    annotations:
+      summary: "The Brain Pod 99th Percentile time is more than 2 sec."
+
+  - alert: High99thPercentileTime_searchads
+    expr: getAdsBids_seconds{deploy="brain-api", quantile="0.99", status="200", ns="searchad",job="spring_exporter_tapsell"} > 0.3
+    for: 15m
+    labels:
+      severity: critical
+    annotations:
+      summary: "The Brain Pod 99th Percentile time is more than 300 mili sec."
+
+  - alert: HighAverageRequestTime_tapsell
+    expr: delta(getAdsBids_seconds_sum{deploy="brain-api", status="200",ns="tapsell", job="spring_exporter_tapsell"}[60m])/delta(getAdsBids_seconds_count{deploy="brain-api", status="200",ns="tapsell", job="spring_exporter_tapsell"}[60m]) > 0.5
+    for: 15m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High Average Request Time in Tapsell Brain API."
+
+  - alert: HighAverageRequestTime_searchAds
+    expr: delta(getAdsBids_seconds_sum{deploy="brain-api", status="200",ns="searchad", job="spring_exporter_tapsell"}[60m])/delta(getAdsBids_seconds_count{deploy="brain-api", status="200",ns="searchad", job="spring_exporter_tapsell"}[60m]) > 0.1
+    for: 15m
+    labels:
+      severity: critical
+    annotations:
+      summary: "High Average Request Time in SearchAds Brain API."
+

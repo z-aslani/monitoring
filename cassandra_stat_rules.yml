@@ -1,0 +1,11 @@
+groups:
+- name: updown
+  rules:
+  - alert: CassandraisDown
+    expr: scrape_samples_scraped{ group=~"cassandra.*"} == 0
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Cassandra Instance is Down!"
+

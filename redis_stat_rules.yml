@@ -1,0 +1,52 @@
+groups:
+- name: redis_rules
+  rules:
+  - alert: RedisisDown
+    expr: redis_up != 1
+    for: 0s
+    labels:
+      severity: critical
+    annotations:
+      summary: "RedisDB is down!"
+
+#  - alert: HighCommandLatency
+#    expr: (delta(redis_command_call_duration_seconds_sum{addr != "redis://172.24.95.13:6379", job="redis"} [1m]) / 60  > 0.1) or (delta(redis_command_call_duration_seconds_sum{addr = "redis://172.24.95.13:6379", cmd != "set"} [1m]) / 60 > 0.1) or (delta(redis_command_call_duration_seconds_sum{addr = "redis://172.24.95.13:6379", cmd = "set"} [1m]) / 60 > 0.3) 
+#    for: 15s
+#    labels:
+#      severity: critical
+##    annotations:
+#      summary: "Command Latency on Address is High!"
+
+  - alert: NoChangeSinceLastSave
+    expr: rate(redis_rdb_changes_since_last_save{instance!="redis-digiad"}[5m]) == 0
+    for: 5m
+    labels:
+      severity: high
+    annotations:
+      summary: "Changes Since Last Save on Address is 0!"
+
+#  - alert: HighMemoryUsage
+#    expr: (redis_memory_used_bytes{cluster="digiad-cluster",instance="redis-location",job="redis_exporter_digiad"}) > 13743895347.2 or
+#          (redis_memory_used_bytes{cluster="digiad-cluster",instance="redis-digiad-brain-keyed",job="redis_exporter_digiad"}) > 8589934592 or
+#          (redis_memory_used_bytes{cluster="digiad-cluster",instance="redis-digiad-cache",job="redis_exporter_digiad"}) > 26843545600 or
+#          (redis_memory_used_bytes{cluster="digiad-cluster",instance="redis-ui",job="redis_exporter_digiad"}) > 54975581388.8
+#    for: 0m
+#    labels:
+#      severity: warning
+#    annotations:
+#      summary: "Redis Node Has High Memory Usage!"
+#
+
+  - alert: RedisOutOfMemory
+    expr: ((node_memory_MemAvailable_bytes{group=~"redis.*",group!="redis-s1-searchad",group!="redis-tapsell-ui"}) / (node_memory_MemTotal_bytes{group=~"redis.*",group!="redis-s1-searchad",group!="redis-tapsell-ui"})) * 100 < 20
+          or
+           ((node_memory_MemAvailable_bytes{group="redis-s1-searchad", job="node_exporter_tapsell"}) / (node_memory_MemTotal_bytes{group="redis-s1-searchad", job="node_exporter_tapsell"})) * 100 < 15
+          or
+           ((node_memory_MemAvailable_bytes{group="redis-tapsell-ui", job="node_exporter_tapsell"}) / (node_memory_MemTotal_bytes{group="redis-tapsell-ui", job="node_exporter_tapsell"})) * 100 < 9
+ 
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Redis out of memory!"
+

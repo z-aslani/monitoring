@@ -1,0 +1,137 @@
+groups:
+- name: restart
+  rules:
+#  - alert: k8sPodReset
+#    expr: increase(kube_pod_container_status_restarts_total [5m]) > 0
+#    for: 1m
+#    labels:
+#      severity: critical
+#    annotations:
+#      summary: "K8S Pod Restart!"
+
+#  - alert: k8sPodNotRunning
+#    expr: kube_pod_container_status_running{pod!~"brain-ip-to-location-learner.*|tracker-evaluator.*"} == 0
+#    for: 1m
+#    labels:
+#      severity: critical
+#    annotations:
+#      summary: "K8S Pod is not running!"
+
+  - alert: KubernetesNodeReady
+    expr: kube_node_status_condition{condition="Ready",status="true"} == 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Kubernetes Node ready (instance {{ $labels.instance }})"
+      description: "Node {{ $labels.node }} has been unready for a long time\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesMemoryPressure
+    expr: kube_node_status_condition{condition="MemoryPressure",status="true"} == 1
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Kubernetes memory pressure (instance {{ $labels.instance }})"
+      description: "{{ $labels.node }} has MemoryPressure condition\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesJobFailed
+    expr: kube_job_status_failed > 0
+    for: 1m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Kubernetes Job failed (instance {{ $labels.instance }})"
+      description: "Job {{$labels.namespace}}/{{$labels.exported_job}} failed to complete\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesPodNotHealthy
+    expr:  min_over_time(sum by (namespace, pod, phase) (kube_pod_status_phase{phase=~"Pending|Unknown|Failed"})[20m:]) > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Kubernetes Pod not healthy (phase {{ $labels.phase }})"
+      description: "Pod has been in a non-ready state for longer than 20 min.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesContainerTerminated
+    expr:  #sum by(namespace, pod, reason, container) (kube_pod_container_status_terminated_reason {reason!="Completed"} > 0
+           min_over_time(sum by(namespace, pod, reason, container) (kube_pod_container_status_terminated_reason {reason!="Completed"} > 0)[10m:])
+    for: 1m
+    labels:
+      severity: high
+    annotations:
+      summary: "Kubernetes Pod's Container Terminated (reason {{ $labels.reason }})"
+      description: "Container has been terminated.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesPodCrashLooping
+    expr: rate(kube_pod_container_status_restarts_total[15m]) * 60 * 5 > 5
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Kubernetes pod crash looping (instance {{ $labels.instance }})"
+      description: "Pod {{ $labels.pod }} is crash looping\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+#  - alert: KubernetesReplicassetMismatch
+#    expr: kube_replicaset_spec_replicas != kube_replicaset_status_ready_replicas
+#    for: 5m
+#    labels:
+#      severity: warning
+#    annotations:
+#      summary: "Kubernetes ReplicasSet mismatch (instance {{ $labels.instance }})"
+#      description: "Deployment Replicas mismatch\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+#  - alert: KubernetesDeploymentReplicasMismatch
+#    expr: kube_deployment_spec_replicas != kube_deployment_status_replicas_available
+#    for: 5m
+#    labels:
+#      severity: warning
+#    annotations:
+#      summary: "Kubernetes Deployment replicas mismatch (instance {{ $labels.instance }})"
+#      description: "Deployment Replicas mismatch\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesDeploymentGenerationMismatch
+    expr: kube_deployment_status_observed_generation != kube_deployment_metadata_generation
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Kubernetes Deployment generation mismatch (instance {{ $labels.instance }})"
+      description: "A Deployment has failed but has not been rolled back.\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesDaemonsetRolloutStuck
+    expr: kube_daemonset_status_number_ready {daemonset!="kube-proxy"} / kube_daemonset_status_desired_number_scheduled {daemonset!="kube-proxy"} * 100  < 100 or kube_daemonset_status_desired_number_scheduled - kube_daemonset_status_current_number_scheduled > 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Kubernetes DaemonSet rollout stuck (instance {{ $labels.instance }})"
+      description: "Some Pods of DaemonSet are not scheduled or not ready\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesDaemonsetMisscheduled
+    expr: kube_daemonset_status_number_misscheduled > 0
+    for: 5m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Kubernetes DaemonSet misscheduled (instance {{ $labels.instance }})"
+      description: "Some DaemonSet Pods are running where they are not supposed to run\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+#  - alert: KubernetesJobCompletion
+#    expr: kube_job_status_failed > 0 or kube_job_spec_completions - kube_job_status_succeeded > 0
+#    for: 5m
+#    labels:
+#      severity: critical
+#    annotations:
+#      summary: "Kubernetes job completion (instance {{ $labels.instance }})"
+#      description: "Kubernetes Job failed to complete\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+
+  - alert: KubernetesCronjobSuspended
+    expr: kube_cronjob_spec_suspend != 0
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Kubernetes CronJob suspended (instance {{ $labels.instance }})"
+      description: "CronJob {{ $labels.namespace }}/{{ $labels.cronjob }} is suspended\n  VALUE = {{ $value }}\n  LABELS: {{ $labels }}"
+

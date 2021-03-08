@@ -1,0 +1,120 @@
+groups:
+- name: kafka_lag
+  rules:
+  - alert: HighLag_mediaad
+    expr:       (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="mediaad_events_converted",consumergroup="eventstash"}) by (topic,consumergroup,job)) > 1000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="mediaad_budgets",consumergroup="panel"}) by (topic,consumergroup,job)) > 100 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="mediaad_event",consumergroup="eventstash"}) by (topic,consumergroup,job)) > 1000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="mediaad_fraud_ips",consumergroup="user-profiler"}) by (topic,consumergroup,job)) > 100 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="mediaad_fraud_users",consumergroup="user-profiler"}) by (topic,consumergroup,job)) > 100 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="new-tagged-visitors",consumergroup="panel"}) by (topic,consumergroup,job)) > 1000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="products",consumergroup="retargeting"}) by (topic,consumergroup,job)) > 100 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="page-views",consumergroup="eventstash"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="visitor-tags",consumergroup="user-profiler"}) by (topic,consumergroup,job)) > 1000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="mediaad_events_user",consumergroup="user-profiler"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="image-compressor",consumergroup="panel"}) by (topic,consumergroup,job)) > 100 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="won-urls",consumergroup="hulk"}) by (topic,consumergroup,job)) > 500000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="mediaad_events_user",consumergroup="user-identifier"}) by (topic,consumergroup,job)) > 2000000
+    for: 10m
+    labels:
+      product: mediaad
+      severity: high
+    annotations:
+      summary: "Consumer Group Has High Lag!"
+
+  - alert: HighLag_metrix
+    expr:       (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metricx-non-ssp-events",consumergroup="EVENTSTASH-NON-SSP-PROCESSOR-NEW"}) by (topic,consumergroup,job)) > 1000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metricx-ssp-events",consumergroup="EVENTSTASH-SSP-EVENTS-PROCESSOR-NEW"}) by (topic,consumergroup,job)) > 10000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-attribution-events",consumergroup="EVENTSTASH-ATTRIBUTION-PROCESSOR"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-callbacks",consumergroup="metrix-callbacks-group"}) by (topic,consumergroup,job)) > 5000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-failed-events",consumergroup="EVENTSTASH-FAILED-EVENTS-PROCESSOR"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-fcm-tokens",consumergroup="STORE-FCM-TOKENS-CONSUMER"}) by (topic,consumergroup,job)) > 1000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-s2s-events",consumergroup="CONVERT-S2S-EVENTS-CONSUMER"}) by (topic,consumergroup,job)) > 1000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-aggregated-stats",consumergroup="EVENTSTASH-STORE-AGGREGATED-STATS"}) by (topic,consumergroup,job)) > 10000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-uninstalls",consumergroup="UninstallJob"}) by (topic,consumergroup,job)) > 500000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-attribution-events-v2",consumergroup="EVENTSTASH-ATTRIBUTION-V2-PROCESSOR"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-non-ssp-events-v2",consumergroup="EVENTSTASH-V2-EVENTS-PROCESSOR"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-to-store-attributions",consumergroup="EVENTSTASH-STORE-ATTRIBUTED-INSTALLS"}) by (topic,consumergroup,job)) > 1000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-callbacks",consumergroup="metrix-callbacks-group"}) by (topic,consumergroup,job)) > 5000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-impressions",consumergroup="EVENTSTASH-STORE-IMPRESSIONS-PROCESSOR"}) by (topic,consumergroup,job)) > 5000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-uninstalls",consumergroup="EVENTSTASH-UPDATE-UNINSTALLS-PROCESSOR"}) by (topic,consumergroup,job)) > 200000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_metrix",topic="metrix-to-stat-aggregator",consumergroup=" EVENTSTASH-STAT-AGGREGATOR"}) by (topic,consumergroup,job)) > 10000000
+               
+    for: 5m
+    labels:
+      product: metrix
+      severity: high
+    annotations:
+      summary: "Consumer Group Has High Lag!"
+
+  - alert: HighLag_tapsell
+    expr:       (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_ad_events",consumergroup="tapsell_eventstash"}) by (topic,consumergroup,job)) > 500000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_stat_aggregator",consumergroup="tapsell_eventstash"}) by (topic,consumergroup,job)) > 5000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_postbacks",consumergroup=" tapsell_eventstash"}) by (topic,consumergroup,job)) > 10000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_important_bi",consumergroup="tapsell_eventstash"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_banker_financial_events",consumergroup="tapsell_eventstash"}) by (topic,consumergroup,job)) > 2000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_ad_events",consumergroup="searchad_eventstash"}) by (topic,consumergroup,job)) > 100000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_auction_results",consumergroup="searchad_eventstash"}) by (topic,consumergroup,job)) > 100000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_bi",consumergroup="searchad_eventstash"}) by (topic,consumergroup,job)) > 2000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_financial_events",consumergroup="searchad_eventstash"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_search_events",consumergroup="searchad_eventstash"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_stat_aggregator",consumergroup="searchad_eventstash"}) by (topic,consumergroup,job)) > 5000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_sibche_ad_events",consumergroup="sibche_eventstash"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_sibche_auction_results",consumergroup="sibche_eventstash"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_sibche_bi",consumergroup="sibche_eventstash"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_sibche_financial_events",consumergroup="sibche_eventstash"}) by (topic,consumergroup,job)) > 25000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_sibche_search_events",consumergroup="sibche_eventstash"}) by (topic,consumergroup,job)) > 25000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_sibche_stat_aggregator",consumergroup="sibche_eventstash"}) by (topic,consumergroup,job)) > 2500 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_convert_events",consumergroup="tapsell-brain-engine-convert-events"}) by (topic,consumergroup,job)) > 500000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_convert_events",consumergroup="tapsell-brain-engine-user-ad-history"}) by (topic,consumergroup,job)) > 500000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_convert_events",consumergroup="tapsell-brain-engine-user-banner-event"}) by (topic,consumergroup,job)) > 500000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_convert_events",consumergroup="tapsell-brain-engine-user-ad-history-cache"}) by (topic,consumergroup,job)) > 500000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_convert_events",consumergroup="tapsell-brain-engine-user-banner-ad-history-cache"}) by (topic,consumergroup,job)) > 500000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_creative_zone_aggregated",consumergroup="tapsell-brain-engine-agg-convert-events"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_user_app_lists",consumergroup="tapsell-brain-engine-user-app-history"}) by (topic,consumergroup,job)) > 5000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_user_fingerprints",consumergroup="tapsell-brain-engine-user-fingerprint-reporter"}) by (topic,consumergroup,job)) > 1000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_user_location_profiles",consumergroup="tapsell-brain-engine-location-profile-reporter"}) by (topic,consumergroup,job)) > 5000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_auction_results",consumergroup="user-app-collector"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_auction_results",consumergroup="brain-engine"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_convert_events",consumergroup="brain-engine"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_convert_events",consumergroup="h-brain-engine"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_convert_events",consumergroup="user-ad-collector"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_search_events",consumergroup="brain-engine"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="searchad_cafebazaar_brain_agg_stats",consumergroup="brain-engine"}) by (topic,consumergroup,job)) > 2000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_convert_events_v2",consumergroup="tapsell-brain-engine-adnet-convert-events"}) by (topic,consumergroup,job)) > 50000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_user_app_lists",consumergroup="UninstallJob"}) by (topic,consumergroup,job)) > 4000000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_winner_request_feature_log",consumergroup="brain-engine-ml"}) by (topic,consumergroup,job)) > 1000000
+
+    for: 10m
+    labels:
+      severity: high
+      product: tapsell
+    annotations:
+      summary: "Consumer Group Has High Lag!"
+
+  - alert: HighLag_trendix
+    expr:       (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="appnegar_user_info",consumergroup="appnegar"}) by (topic,consumergroup,job)) > 1440000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="tapsell_user_app_lists",consumergroup="appnegar"}) by (topic,consumergroup,job)) > 30000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="appnegar_user_app_aggregate_process",consumergroup="appnegar"}) by (topic,consumergroup,job)) > 108000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="appnegar_user_app_aggregate_persist",consumergroup="appnegar"}) by (topic,consumergroup,job)) > 108000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="appnegar_app_list_change_reports",consumergroup="appnegar"}) by (topic,consumergroup,job)) > 90000
+                
+    for: 10m
+    labels:
+      product: trendix
+      severity: high
+    annotations:
+      summary: "Consumer Group Has High Lag!"
+
+  - alert: HighLag_videobazaar
+    expr:       (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="videobazaar_ad_events",consumergroup="videobazaar_eventstash"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="videobazaar_auction_results",consumergroup="videobazaar_eventstash"}) by (topic,consumergroup,job)) > 50000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="videobazaar_bi",consumergroup="videobazaar_eventstash"}) by (topic,consumergroup,job)) > 10000 or
+                (sum(kafka_consumergroup_lag{job="kafka_exporter_pegah",topic="videobazaar_financial_events",consumergroup="videobazaar_eventstash"}) by (topic,consumergroup,job)) > 20000
+                
+    for: 10m
+    labels:
+      product: cafead
+      severity: high
+    annotations:
+      summary: "Consumer Group Has High Lag!"

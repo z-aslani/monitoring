@@ -1,0 +1,86 @@
+groups:
+- name: health
+  rules:
+  - alert: YellowCluster
+    expr:  count by (cluster, exported_cluster, job,color) (elasticsearch_cluster_health_status{color="yellow"} == 1)
+    for: 2m
+    labels:
+      severity: critical
+    annotations:
+      summary: "Cluster status is YELLOW!"
+
+  - alert: RedCluster
+    expr: count by (cluster, exported_cluster, job,color) (elasticsearch_cluster_health_status{color="red"} == 1)
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Cluster status is RED!"
+
+  - alert: HighHeap
+    expr: elasticsearch_jvm_memory_used_bytes{area="heap"}/elasticsearch_jvm_memory_max_bytes{area="heap"} > 0.8
+    for: 5m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Cluster has high heap usage!"
+
+  - alert: ElasticisDown
+    expr: scrape_samples_scraped{job=~"es_exporter.*"} == 0
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Elastic Instance is Down!"
+
+  - alert: ElasticClusterUnhealthy
+    expr: elasticsearch_cluster_health_up == 0
+    for: 2m
+    labels:
+      severity: warning
+    annotations:
+      summary: "Elastic Cluster Node is not Healthy!"
+
+#-------------------------specific---rules---per---product------------------------------------
+
+#- name: down_elastic_cluster
+#  rules:
+
+#Mediaad
+  - alert: ElasticClusterHealth
+    expr: elasticsearch_cluster_health_number_of_nodes{job="es_exporter_mediaad"} != 3
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Number of Elastic Node has been Changed!"
+
+#Tapsell
+  - alert: ElasticClusterHealth
+    expr: elasticsearch_cluster_health_number_of_nodes{instance=~".*tapsell",job="es_exporter_tapsell"} != 5
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Number of Elastic Node has been Changed!"
+
+#Searchad
+  - alert: ElasticClusterHealth
+    expr: elasticsearch_cluster_health_number_of_nodes{instance=~".*searchad",job="es_exporter_tapsell"} != 3
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Number of Elastic Node has been Changed!"
+
+#Logging
+  - alert: ElasticClusterHealth
+    expr: elasticsearch_cluster_health_number_of_nodes{instance=~"elastic-log.*"} != 3
+    for: 15s
+    labels:
+      severity: critical
+    annotations:
+      summary: "Number of Elastic Node has been Changed!"
+
+
+#elasticsearch_cluster_health_number_of_data_nodes{job="es_exporter_tapsell"}

@@ -1,0 +1,17 @@
+groups:
+- name: ELKstat
+  rules:
+  - alert: ResponseTime
+    expr: elk_response_time{job="elk_exporter"} > 0.25
+    for: 30s
+    labels:
+      severity: critical
+    annotations:
+      summary: "High Response Time!"
+  - alert: 5xxCount
+    expr: elk_5xx_count{job="elk_exporter"} > 50
+    for: 0s
+    labels:
+      severity: critical
+    annotations:
+      summary: "High 5XX Count!"
